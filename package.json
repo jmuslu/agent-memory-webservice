@@ -5,6 +5,7 @@
   "type": "module",
   "description": "A small NandaHack Phase 2 service for basis-gated agent memory fusion.",
   "scripts": {
+    "agent-demo": "node scripts/agent-demo.js",
     "dev": "vercel dev",
     "test": "node test/fuse.test.js",
     "start": "node local-server.js"

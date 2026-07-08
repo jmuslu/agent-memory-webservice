@@ -43,6 +43,12 @@ memory, agents, crdt, context-saturation, verification
    .\scripts\demo.ps1 -BaseUrl "https://YOUR-VERCEL-URL.vercel.app"
    ```
 
+   Or run the agent-style narrated demo:
+
+   ```powershell
+   npm run agent-demo -- "https://YOUR-VERCEL-URL.vercel.app"
+   ```
+
 4. Show that `/api/fuse` accepts the four calculator basis reports.
 5. Show that natural-language saturation, code-shaped saturation, and the off-basis `"horoscope"` claim are ignored.
 6. Point to the trace line:
