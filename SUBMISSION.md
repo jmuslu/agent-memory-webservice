@@ -55,6 +55,14 @@ memory, agents, crdt, context-saturation, verification
    npm run prompt-demo -- "https://YOUR-VERCEL-URL.vercel.app" "examples/agent-session-prompt.md"
    ```
 
+   To demonstrate that the same setup can start from a fresh external agent session, paste this file into Codex, Claude, or another terminal-capable agent:
+
+   ```text
+   examples/fresh-agent-copy-paste-prompt.md
+   ```
+
+   The fresh agent should fetch `https://agent-memory-webservice.vercel.app/skill.md`, discover `POST /api/fuse`, call it with the included setup, and report the same `decision|calculator|ship|score=4|ignored=3` trace.
+
 4. Show that `/api/fuse` accepts the four calculator basis reports.
 5. Show that natural-language saturation, code-shaped saturation, and the off-basis `"horoscope"` claim are ignored.
 6. Point to the trace line:

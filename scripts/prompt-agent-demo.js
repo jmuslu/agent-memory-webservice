@@ -7,6 +7,14 @@ const defaultPromptPath = "examples/agent-session-prompt.md";
 const baseUrl = (process.argv[2] ?? defaultBaseUrl).replace(/\/$/, "");
 const promptPath = process.argv[3] ?? defaultPromptPath;
 
+async function readStdin() {
+  const chunks = [];
+  for await (const chunk of process.stdin) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks).toString("utf8");
+}
+
 async function request(pathname, options = {}) {
   const response = await fetch(`${baseUrl}${pathname}`, options);
   if (!response.ok) {
@@ -44,8 +52,10 @@ function summarizeReports(reports) {
 }
 
 async function main() {
-  const absolutePromptPath = path.resolve(promptPath);
-  const prompt = await fs.readFile(absolutePromptPath, "utf8");
+  const prompt =
+    promptPath === "-"
+      ? await readStdin()
+      : await fs.readFile(path.resolve(promptPath), "utf8");
 
   printSection("Prompt injected into fresh agent session");
   console.log(firstLines(prompt, 8));
@@ -63,6 +73,7 @@ async function main() {
   summarizeReports(setup.reports);
 
   printSection("Agent calls POST /api/fuse");
+  console.log(`curl -X POST ${baseUrl}/api/fuse -H "Content-Type: application/json" -d '<task setup json>'`);
   const result = await request("/api/fuse", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

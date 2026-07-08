@@ -7,6 +7,7 @@
   "scripts": {
     "agent-demo": "node scripts/agent-demo.js",
     "prompt-demo": "node scripts/prompt-agent-demo.js",
+    "print-agent-prompt": "node -e \"process.stdout.write(require('node:fs').readFileSync('examples/fresh-agent-copy-paste-prompt.md', 'utf8'))\"",
     "dev": "vercel dev",
     "test": "node test/fuse.test.js",
     "start": "node local-server.js"
