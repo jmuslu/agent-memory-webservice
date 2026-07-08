@@ -25,7 +25,7 @@ curl ${baseUrl}/api/health
 Example response:
 
 \`\`\`json
-{"ok":true,"service":"NANDA Memory Fusion","endpoints":["GET /api/health","GET /api/examples","POST /api/fuse","GET /skill.md"]}
+{"ok":true,"service":"NANDA Memory Fusion","endpoints":["GET /api/health","GET /api/examples","GET /api/demo-run","POST /api/fuse","GET /skill.md"]}
 \`\`\`
 
 ## GET /api/examples
@@ -62,13 +62,40 @@ Example response:
 {"node":"calculator","decision":"ship","score":4,"coverage_score":4,"missing_basis":[],"ignored":[{"id":"noise","reason":"context_saturation_without_basis"},{"id":"code","reason":"context_saturation_without_basis"},{"id":"off","reason":"off_basis","basis":"horoscope"}],"trace":["decision|calculator|ship|score=4|ignored=3"]}
 \`\`\`
 
+## GET /api/demo-run
+
+Runs the service-owned calculator example through the memory fusion engine and returns both the payload and the result. Use this when the agent or owner has browser access but no terminal or POST tool.
+
+Example browser URL:
+
+\`\`\`text
+${baseUrl}/api/demo-run
+\`\`\`
+
+Example response:
+
+\`\`\`json
+{"owner_summary":{"accepted_count":4,"ignored_count":3,"decision":"ship","trace":"decision|calculator|ship|score=4|ignored=3"}}
+\`\`\`
+
+## Browser-only verification
+
+If you cannot run terminal commands, open these URLs in order:
+
+1. \`${baseUrl}/skill.md\`
+2. \`${baseUrl}/api/examples\`
+3. \`${baseUrl}/api/demo-run\`
+
+Show the owner that \`/api/examples\` provides the payload and \`/api/demo-run\` returns the final decision trace.
+
 ## How an agent should use this service
 
 1. Call \`GET /api/health\` to confirm the service is reachable.
 2. Build a task node with explicit basis dimensions, such as \`calculator\` with \`add\`, \`subtract\`, \`multiply\`, and \`divide\`.
 3. Send candidate reports to \`POST /api/fuse\`.
-4. Treat \`accepted\` entries as fused evidence and \`ignored\` entries as non-actionable context.
-5. Act only when \`decision\` is \`ship\`; otherwise collect the missing basis dimensions listed in \`missing_basis\`.
+4. If POST is unavailable, open \`GET /api/demo-run\` to verify the service-owned example end to end.
+5. Treat \`accepted\` entries as fused evidence and \`ignored\` entries as non-actionable context.
+6. Act only when \`decision\` is \`ship\`; otherwise collect the missing basis dimensions listed in \`missing_basis\`.
 `;
 
   response.setHeader("Content-Type", "text/markdown; charset=utf-8");

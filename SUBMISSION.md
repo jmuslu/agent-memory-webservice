@@ -63,6 +63,14 @@ memory, agents, crdt, context-saturation, verification
 
    The fresh agent should fetch `https://agent-memory-webservice.vercel.app/skill.md`, discover `POST /api/fuse`, call it with the included setup, and report the same `decision|calculator|ship|score=4|ignored=3` trace.
 
+   For a sandboxed browser-only agent, paste:
+
+   ```text
+   examples/browser-agent-copy-paste-prompt.md
+   ```
+
+   That version uses only public URLs: `/skill.md`, `/api/examples`, and `/api/demo-run`.
+
 4. Show that `/api/fuse` accepts the four calculator basis reports.
 5. Show that natural-language saturation, code-shaped saturation, and the off-basis `"horoscope"` claim are ignored.
 6. Point to the trace line:

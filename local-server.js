@@ -1,5 +1,6 @@
 import http from "node:http";
 import examplesHandler from "./api/examples.js";
+import demoRunHandler from "./api/demo-run.js";
 import fuseHandler from "./api/fuse.js";
 import healthHandler from "./api/health.js";
 import skillHandler from "./api/skill.js";
@@ -45,6 +46,8 @@ const server = http.createServer(async (request, serverResponse) => {
       healthHandler(request, response);
     } else if (url.pathname === "/api/examples") {
       examplesHandler(request, response);
+    } else if (url.pathname === "/api/demo-run") {
+      demoRunHandler(request, response);
     } else if (url.pathname === "/api/fuse") {
       fuseHandler(request, response);
     } else if (url.pathname === "/skill.md") {

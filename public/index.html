@@ -76,6 +76,17 @@
         min-height: 220px;
         white-space: pre-wrap;
       }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      h2 {
+        font-size: 1rem;
+        margin: 0 0 8px;
+      }
     </style>
   </head>
   <body>
@@ -90,34 +101,29 @@
         <a href="/skill.md">View SKILL.md</a>
         <a href="/api/health">Health</a>
         <a href="/api/examples">Example Payload</a>
-        <button id="run-demo" type="button">Run Demo</button>
+        <a href="/api/demo-run">No-Terminal Demo JSON</a>
+        <button id="run-demo" type="button">Run Browser Demo</button>
       </div>
-      <pre id="output">Click Run Demo to call POST /api/fuse.</pre>
+      <div class="grid">
+        <section>
+          <h2>Payload From Service</h2>
+          <pre id="payload">Click Run Browser Demo to load /api/examples.</pre>
+        </section>
+        <section>
+          <h2>Live Decision</h2>
+          <pre id="output">Click Run Browser Demo to call /api/demo-run.</pre>
+        </section>
+      </div>
     </main>
     <script>
-      const demoPayload = {
-        node: "calculator",
-        basis: ["add", "subtract", "multiply", "divide"],
-        threshold: 4,
-        reports: [
-          { id: "r1", node: "calculator", basis: "add", delta: 1 },
-          { id: "r2", node: "calculator", basis: "subtract", delta: 1 },
-          { id: "r3", node: "calculator", basis: "multiply", delta: 1 },
-          { id: "r4", node: "calculator", basis: "divide", delta: 1 },
-          { id: "alice", text: "Alice was beginning to get very tired..." },
-          { id: "gpu", text: "amdgpu_bo_placement_from_domain(...)" },
-          { id: "off", node: "calculator", basis: "horoscope", delta: 99 }
-        ]
-      };
-
       document.querySelector("#run-demo").addEventListener("click", async () => {
+        const payload = document.querySelector("#payload");
         const output = document.querySelector("#output");
-        output.textContent = "Calling /api/fuse...";
-        const response = await fetch("/api/fuse", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(demoPayload)
-        });
+        payload.textContent = "Loading /api/examples...";
+        output.textContent = "Calling /api/demo-run...";
+        const exampleResponse = await fetch("/api/examples");
+        payload.textContent = JSON.stringify(await exampleResponse.json(), null, 2);
+        const response = await fetch("/api/demo-run");
         output.textContent = JSON.stringify(await response.json(), null, 2);
       });
     </script>

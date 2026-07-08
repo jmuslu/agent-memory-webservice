@@ -33,3 +33,22 @@ decision|calculator|ship|score=4|ignored=3
 ```
 
 This shows the service does not depend on a custom local harness. The same public `SKILL.md` and live endpoint can be used from any compatible agent setup.
+
+## Option C: paste into a sandboxed browser-only agent
+
+Open:
+
+```text
+examples/browser-agent-copy-paste-prompt.md
+```
+
+Paste the whole prompt into a fresh chat session that can browse but cannot run shell commands. The agent should:
+
+1. Open `https://agent-memory-webservice.vercel.app/skill.md`.
+2. Open `https://agent-memory-webservice.vercel.app/api/examples` to show the service-owned payload.
+3. Open `https://agent-memory-webservice.vercel.app/api/demo-run` to show the live result.
+4. Report the final trace:
+
+```text
+decision|calculator|ship|score=4|ignored=3
+```
