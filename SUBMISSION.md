@@ -69,7 +69,7 @@ memory, agents, crdt, context-saturation, verification
    examples/browser-agent-copy-paste-prompt.md
    ```
 
-   That version uses only public URLs: `/skill.md`, `/api/examples`, and `/api/demo-run`.
+   That version uses only public URLs: `/skill.md`, `/api/project-prompt`, `/api/source-text`, `/api/build-payload`, and `/api/verify-chain`.
 
 4. Show that `/api/fuse` accepts the four calculator basis reports.
 5. Show that natural-language saturation, code-shaped saturation, and the off-basis `"horoscope"` claim are ignored.

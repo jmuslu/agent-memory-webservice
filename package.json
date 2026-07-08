@@ -10,7 +10,7 @@
     "print-agent-prompt": "node -e \"process.stdout.write(require('node:fs').readFileSync('examples/fresh-agent-copy-paste-prompt.md', 'utf8'))\"",
     "print-browser-prompt": "node -e \"process.stdout.write(require('node:fs').readFileSync('examples/browser-agent-copy-paste-prompt.md', 'utf8'))\"",
     "dev": "vercel dev",
-    "test": "node test/fuse.test.js",
+    "test": "node --test test/*.test.js",
     "start": "node local-server.js"
   },
   "engines": {

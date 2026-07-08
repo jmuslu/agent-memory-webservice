@@ -25,23 +25,59 @@ curl ${baseUrl}/api/health
 Example response:
 
 \`\`\`json
-{"ok":true,"service":"NANDA Memory Fusion","endpoints":["GET /api/health","GET /api/examples","GET /api/demo-run","POST /api/fuse","GET /skill.md"]}
+{"ok":true,"service":"NANDA Memory Fusion","endpoints":["GET /api/health","GET /api/project-prompt","GET /api/source-text","GET /api/build-payload","GET /api/verify-chain","GET /api/examples","GET /api/demo-run","POST /api/fuse","GET /skill.md"]}
 \`\`\`
 
-## GET /api/examples
+## GET /api/project-prompt
 
-Returns a ready-to-use calculator memory fusion request.
+Returns the project creation prompt and the memory basis derived from it.
 
 Example curl:
 
 \`\`\`bash
-curl ${baseUrl}/api/examples
+curl ${baseUrl}/api/project-prompt
 \`\`\`
 
 Example response:
 
 \`\`\`json
-{"examples":{"calculator":{"node":"calculator","basis":["add","subtract","multiply","divide"],"threshold":4,"reports":[{"id":"r1","node":"calculator","basis":"add","delta":1}]}}}
+{"prompt":"Create a calculator app that supports add, subtract, multiply, and divide.","node":"calculator","basis":["add","subtract","multiply","divide"]}
+\`\`\`
+
+## GET /api/source-text
+
+Returns the natural-language and code-shaped saturation text separately from the fusion payload.
+
+Example browser URL:
+
+\`\`\`text
+${baseUrl}/api/source-text
+\`\`\`
+
+## GET /api/build-payload
+
+Builds the fusion payload from the project prompt, declared basis, source saturation text, and an off-basis horoscope report.
+
+Example browser URL:
+
+\`\`\`text
+${baseUrl}/api/build-payload
+\`\`\`
+
+## GET /api/verify-chain
+
+Runs the constructed payload through the live fusion engine and returns the full audit chain.
+
+Example browser URL:
+
+\`\`\`text
+${baseUrl}/api/verify-chain
+\`\`\`
+
+Example response:
+
+\`\`\`json
+{"audit":{"basis_tied_to_project_prompt":true,"natural_language_saturation_ignored":true,"code_shaped_saturation_ignored":true,"off_basis_horoscope_ignored":true,"final_trace":"decision|calculator|ship|score=4|ignored=3"}}
 \`\`\`
 
 ## POST /api/fuse
@@ -64,7 +100,7 @@ Example response:
 
 ## GET /api/demo-run
 
-Runs the service-owned calculator example through the memory fusion engine and returns both the payload and the result. Use this when the agent or owner has browser access but no terminal or POST tool.
+Compatibility shortcut for the browser demo. Prefer \`/api/project-prompt\`, \`/api/source-text\`, \`/api/build-payload\`, and \`/api/verify-chain\` for the full auditable chain.
 
 Example browser URL:
 
@@ -83,17 +119,19 @@ Example response:
 If you cannot run terminal commands, open these URLs in order:
 
 1. \`${baseUrl}/skill.md\`
-2. \`${baseUrl}/api/examples\`
-3. \`${baseUrl}/api/demo-run\`
+2. \`${baseUrl}/api/project-prompt\`
+3. \`${baseUrl}/api/source-text\`
+4. \`${baseUrl}/api/build-payload\`
+5. \`${baseUrl}/api/verify-chain\`
 
-Show the owner that \`/api/examples\` provides the payload and \`/api/demo-run\` returns the final decision trace.
+Show the owner that the project prompt creates the calculator basis, source text is returned separately, the payload is built from those pieces, and \`/api/verify-chain\` returns the final decision trace.
 
 ## How an agent should use this service
 
 1. Call \`GET /api/health\` to confirm the service is reachable.
 2. Build a task node with explicit basis dimensions, such as \`calculator\` with \`add\`, \`subtract\`, \`multiply\`, and \`divide\`.
 3. Send candidate reports to \`POST /api/fuse\`.
-4. If POST is unavailable, open \`GET /api/demo-run\` to verify the service-owned example end to end.
+4. If POST is unavailable, open the browser-only verification URLs above to verify the service end to end.
 5. Treat \`accepted\` entries as fused evidence and \`ignored\` entries as non-actionable context.
 6. Act only when \`decision\` is \`ship\`; otherwise collect the missing basis dimensions listed in \`missing_basis\`.
 `;

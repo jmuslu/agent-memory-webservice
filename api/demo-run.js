@@ -1,13 +1,14 @@
-import { calculatorExample } from "./examples.js";
-import { fuseMemory } from "./fuse.js";
+import { verifyChain } from "./chain.js";
 
 export default function handler(_request, response) {
-  const result = fuseMemory(calculatorExample);
+  const verification = verifyChain();
+  const result = verification.fusion_result;
 
   response.status(200).json({
-    proof: "The service loaded its own example payload, ran basis fusion, and returned the decision.",
-    payload: calculatorExample,
+    proof: "The service loaded its project prompt and source saturation text, built a payload, ran basis fusion, and returned the decision.",
+    payload: verification.constructed_payload,
     result,
+    audit: verification.audit,
     owner_summary: {
       accepted_count: result.accepted.length,
       ignored_count: result.ignored.length,

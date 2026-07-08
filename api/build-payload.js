@@ -1,13 +1,8 @@
 import { buildPayload } from "./chain.js";
 
-const calculatorExample = buildPayload();
-
 export default function handler(_request, response) {
   response.status(200).json({
-    examples: {
-      calculator: calculatorExample
-    }
+    proof: "Payload built from the project prompt basis and separate source saturation text.",
+    payload: buildPayload()
   });
 }
-
-export { calculatorExample };

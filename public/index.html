@@ -100,31 +100,49 @@
       <div class="actions">
         <a href="/skill.md">View SKILL.md</a>
         <a href="/api/health">Health</a>
-        <a href="/api/examples">Example Payload</a>
-        <a href="/api/demo-run">No-Terminal Demo JSON</a>
-        <button id="run-demo" type="button">Run Browser Demo</button>
+        <a href="/api/project-prompt">Project Prompt</a>
+        <a href="/api/source-text">Source Text</a>
+        <a href="/api/build-payload">Build Payload</a>
+        <a href="/api/verify-chain">Verify Chain</a>
+        <button id="run-demo" type="button">Run Browser Chain</button>
       </div>
       <div class="grid">
         <section>
-          <h2>Payload From Service</h2>
-          <pre id="payload">Click Run Browser Demo to load /api/examples.</pre>
+          <h2>Project Prompt</h2>
+          <pre id="project">Click Run Browser Chain to load /api/project-prompt.</pre>
         </section>
         <section>
-          <h2>Live Decision</h2>
-          <pre id="output">Click Run Browser Demo to call /api/demo-run.</pre>
+          <h2>Source Text</h2>
+          <pre id="source">Click Run Browser Chain to load /api/source-text.</pre>
+        </section>
+        <section>
+          <h2>Constructed Payload</h2>
+          <pre id="payload">Click Run Browser Chain to load /api/build-payload.</pre>
+        </section>
+        <section>
+          <h2>Live Verification</h2>
+          <pre id="output">Click Run Browser Chain to call /api/verify-chain.</pre>
         </section>
       </div>
     </main>
     <script>
       document.querySelector("#run-demo").addEventListener("click", async () => {
+        const project = document.querySelector("#project");
+        const source = document.querySelector("#source");
         const payload = document.querySelector("#payload");
         const output = document.querySelector("#output");
-        payload.textContent = "Loading /api/examples...";
-        output.textContent = "Calling /api/demo-run...";
-        const exampleResponse = await fetch("/api/examples");
-        payload.textContent = JSON.stringify(await exampleResponse.json(), null, 2);
-        const response = await fetch("/api/demo-run");
-        output.textContent = JSON.stringify(await response.json(), null, 2);
+        project.textContent = "Loading /api/project-prompt...";
+        source.textContent = "Loading /api/source-text...";
+        payload.textContent = "Loading /api/build-payload...";
+        output.textContent = "Calling /api/verify-chain...";
+        const projectResponse = await fetch("/api/project-prompt");
+        const sourceResponse = await fetch("/api/source-text");
+        const payloadResponse = await fetch("/api/build-payload");
+        const verifyResponse = await fetch("/api/verify-chain");
+        project.textContent = JSON.stringify(await projectResponse.json(), null, 2);
+        source.textContent = JSON.stringify(await sourceResponse.json(), null, 2);
+        payload.textContent = JSON.stringify(await payloadResponse.json(), null, 2);
+        output.textContent = JSON.stringify(await verifyResponse.json(), null, 2);
       });
     </script>
   </body>

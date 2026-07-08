@@ -3,7 +3,11 @@ import examplesHandler from "./api/examples.js";
 import demoRunHandler from "./api/demo-run.js";
 import fuseHandler from "./api/fuse.js";
 import healthHandler from "./api/health.js";
+import buildPayloadHandler from "./api/build-payload.js";
+import projectPromptHandler from "./api/project-prompt.js";
 import skillHandler from "./api/skill.js";
+import sourceTextHandler from "./api/source-text.js";
+import verifyChainHandler from "./api/verify-chain.js";
 
 const port = Number(process.env.PORT ?? 3000);
 
@@ -44,6 +48,14 @@ const server = http.createServer(async (request, serverResponse) => {
 
     if (url.pathname === "/api/health") {
       healthHandler(request, response);
+    } else if (url.pathname === "/api/project-prompt") {
+      projectPromptHandler(request, response);
+    } else if (url.pathname === "/api/source-text") {
+      sourceTextHandler(request, response);
+    } else if (url.pathname === "/api/build-payload") {
+      buildPayloadHandler(request, response);
+    } else if (url.pathname === "/api/verify-chain") {
+      verifyChainHandler(request, response);
     } else if (url.pathname === "/api/examples") {
       examplesHandler(request, response);
     } else if (url.pathname === "/api/demo-run") {

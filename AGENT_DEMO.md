@@ -45,9 +45,11 @@ examples/browser-agent-copy-paste-prompt.md
 Paste the whole prompt into a fresh chat session that can browse but cannot run shell commands. The agent should:
 
 1. Open `https://agent-memory-webservice.vercel.app/skill.md`.
-2. Open `https://agent-memory-webservice.vercel.app/api/examples` to show the service-owned payload.
-3. Open `https://agent-memory-webservice.vercel.app/api/demo-run` to show the live result.
-4. Report the final trace:
+2. Open `https://agent-memory-webservice.vercel.app/api/project-prompt` to show the project prompt and basis.
+3. Open `https://agent-memory-webservice.vercel.app/api/source-text` to show source saturation text separately.
+4. Open `https://agent-memory-webservice.vercel.app/api/build-payload` to show the constructed payload.
+5. Open `https://agent-memory-webservice.vercel.app/api/verify-chain` to show the live result and audit flags.
+6. Report the final trace:
 
 ```text
 decision|calculator|ship|score=4|ignored=3
