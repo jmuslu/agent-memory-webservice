@@ -53,13 +53,13 @@ Example curl:
 \`\`\`bash
 curl -X POST ${baseUrl}/api/fuse \\
   -H "Content-Type: application/json" \\
-  -d '{"node":"calculator","basis":["add","subtract","multiply","divide"],"threshold":4,"reports":[{"id":"r1","node":"calculator","basis":"add","delta":1},{"id":"r2","node":"calculator","basis":"subtract","delta":1},{"id":"r3","node":"calculator","basis":"multiply","delta":1},{"id":"r4","node":"calculator","basis":"divide","delta":1},{"id":"noise","text":"Alice was beginning to get very tired..."},{"id":"off","node":"calculator","basis":"horoscope","delta":99}]}'
+  -d '{"node":"calculator","basis":["add","subtract","multiply","divide"],"threshold":4,"reports":[{"id":"r1","node":"calculator","basis":"add","delta":1},{"id":"r2","node":"calculator","basis":"subtract","delta":1},{"id":"r3","node":"calculator","basis":"multiply","delta":1},{"id":"r4","node":"calculator","basis":"divide","delta":1},{"id":"noise","text":"Alice was beginning to get very tired..."},{"id":"code","text":"amdgpu_bo_placement_from_domain(...)"},{"id":"off","node":"calculator","basis":"horoscope","delta":99}]}'
 \`\`\`
 
 Example response:
 
 \`\`\`json
-{"node":"calculator","decision":"ship","score":4,"coverage_score":4,"missing_basis":[],"ignored":[{"id":"noise","reason":"context_saturation_without_basis"},{"id":"off","reason":"off_basis","basis":"horoscope"}],"trace":["decision|calculator|ship|score=4|ignored=2"]}
+{"node":"calculator","decision":"ship","score":4,"coverage_score":4,"missing_basis":[],"ignored":[{"id":"noise","reason":"context_saturation_without_basis"},{"id":"code","reason":"context_saturation_without_basis"},{"id":"off","reason":"off_basis","basis":"horoscope"}],"trace":["decision|calculator|ship|score=4|ignored=3"]}
 \`\`\`
 
 ## How an agent should use this service

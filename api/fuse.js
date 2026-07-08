@@ -5,6 +5,18 @@ function parseInteger(value, fieldName) {
   return value;
 }
 
+function normalizePayload(body) {
+  if (Buffer.isBuffer(body)) {
+    return JSON.parse(body.toString("utf8"));
+  }
+
+  if (typeof body === "string") {
+    return JSON.parse(body);
+  }
+
+  return body;
+}
+
 function deltaFromReport(report) {
   if (Object.prototype.hasOwnProperty.call(report, "delta")) {
     return parseInteger(report.delta, "delta");
@@ -141,7 +153,7 @@ export default function handler(request, response) {
   }
 
   try {
-    response.status(200).json(fuseMemory(request.body));
+    response.status(200).json(fuseMemory(normalizePayload(request.body)));
   } catch (error) {
     response.status(400).json({ error: "bad_request", detail: error.message });
   }
