@@ -49,6 +49,12 @@ memory, agents, crdt, context-saturation, verification
    npm run agent-demo -- "https://YOUR-VERCEL-URL.vercel.app"
    ```
 
+   To show a prompt injected into a fresh agent-style session, run:
+
+   ```powershell
+   npm run prompt-demo -- "https://YOUR-VERCEL-URL.vercel.app" "examples/agent-session-prompt.md"
+   ```
+
 4. Show that `/api/fuse` accepts the four calculator basis reports.
 5. Show that natural-language saturation, code-shaped saturation, and the off-basis `"horoscope"` claim are ignored.
 6. Point to the trace line:
