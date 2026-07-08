@@ -1,0 +1,15 @@
+{
+  "name": "nanda-memory-fusion-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A small NandaHack Phase 2 service for basis-gated agent memory fusion.",
+  "scripts": {
+    "dev": "vercel dev",
+    "test": "node test/fuse.test.js",
+    "start": "node local-server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
