@@ -41,6 +41,22 @@ project prompt -> declared basis -> noisy reports -> PN-Counter fusion -> accept
 
 It is useful for evaluating whether this memory rule would help an agent workflow before implementing or self-hosting it.
 
+## Product Direction
+
+This service is a proof-of-concept for a clean-room memory gate. In a production agent system, agents should not write raw web context directly into persistent memory, a wiki, or a vector database. They should first pass candidate claims through a task-specific basis gate.
+
+The intended architecture is:
+
+\`\`\`text
+agent researches the web
+-> extracts candidate reports
+-> submits reports to the fusion gate
+-> only basis-valid evidence passes
+-> accepted evidence is written to durable memory
+\`\`\`
+
+The service is intentionally stateless because it sits before the memory store. It verifies what is allowed to become memory; it is not the memory database itself.
+
 ## Not Intended For
 
 Do not treat this hosted demo as production memory infrastructure. It does not provide persistence, authentication, multi-tenant isolation, private storage, rate limits, provenance verification, or service-level guarantees.

@@ -22,6 +22,18 @@ export default function handler(_request, response) {
       "PN-Counter signed evidence handling",
       "natural-language/code-shaped/off-basis rejection"
     ],
+    product_direction: {
+      role: "clean-room memory gate before durable memory writes",
+      intended_architecture: [
+        "agent researches the web",
+        "agent extracts candidate reports",
+        "agent submits reports to the fusion gate",
+        "only basis-valid evidence passes",
+        "accepted evidence is written to durable memory, a wiki, or a vector database"
+      ],
+      why_stateless:
+        "The service verifies what is allowed to become memory before a separate memory store persists it."
+    },
     known_limitations: [
       "basis-name spoofing is accepted by this basis-only layer",
       "source authentication belongs to a separate provenance/authentication layer",

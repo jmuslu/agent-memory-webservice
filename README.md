@@ -6,6 +6,8 @@ It is not a long-term conversation memory store and does not require accounts, s
 
 Use the hosted service as a proof-of-concept, teaching artifact, and browser-testable harness. For production use, port or self-host the pattern inside your own trusted stack with persistence, authentication, provenance, and rate limits.
 
+Product direction: this is a clean-room memory gate before durable memory writes. Agents research the web, extract candidate reports, pass them through a task-specific basis gate, and only then write accepted evidence to a wiki, vector database, or memory store. The service is intentionally stateless because it verifies what is allowed to become memory; it is not the memory database itself.
+
 ## Endpoints
 
 - `GET /api/health`
