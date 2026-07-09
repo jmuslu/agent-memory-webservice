@@ -6,556 +6,741 @@
     <title>NANDA Memory Fusion</title>
     <style>
       :root {
-        color-scheme: light;
+        color-scheme: dark;
         font-family:
           Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #f7f5ef;
-        color: #1f2933;
+        background: #11100d;
+        color: #f8fafc;
+      }
+
+      * {
+        box-sizing: border-box;
       }
 
       body {
+        background:
+          radial-gradient(circle at 16% 12%, rgba(20, 184, 166, 0.18), transparent 30%),
+          radial-gradient(circle at 78% 18%, rgba(245, 158, 11, 0.13), transparent 28%),
+          linear-gradient(135deg, #11100d 0%, #1c1917 48%, #101314 100%);
         margin: 0;
         min-height: 100vh;
       }
 
       main {
-        width: min(1120px, calc(100vw - 32px));
+        min-height: 100vh;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      .shell {
+        min-height: 100vh;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .shader-field {
+        inset: 0;
+        opacity: 0.72;
+        pointer-events: none;
+        position: fixed;
+      }
+
+      .shader-field::before,
+      .shader-field::after {
+        animation: drift 16s ease-in-out infinite alternate;
+        background:
+          radial-gradient(circle, rgba(45, 212, 191, 0.22), transparent 34%),
+          radial-gradient(circle at 76% 42%, rgba(248, 113, 113, 0.12), transparent 25%);
+        content: "";
+        filter: blur(28px);
+        inset: -18%;
+        position: absolute;
+        transform: rotate(8deg);
+      }
+
+      .shader-field::after {
+        animation-duration: 22s;
+        background:
+          radial-gradient(circle at 18% 68%, rgba(251, 191, 36, 0.13), transparent 24%),
+          radial-gradient(circle at 67% 74%, rgba(52, 211, 153, 0.14), transparent 28%);
+        transform: rotate(-12deg);
+      }
+
+      @keyframes drift {
+        from {
+          transform: translate3d(-2%, -1%, 0) rotate(4deg) scale(1);
+        }
+        to {
+          transform: translate3d(3%, 2%, 0) rotate(-4deg) scale(1.06);
+        }
+      }
+
+      .topbar {
+        align-items: center;
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
         margin: 0 auto;
-        padding: 48px 0 64px;
+        max-width: 1240px;
+        padding: 24px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .brand {
+        display: grid;
+        gap: 4px;
+      }
+
+      .brand span {
+        color: #99f6e4;
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .brand strong {
+        font-size: 1.05rem;
+      }
+
+      .tabs {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 8px;
+        display: flex;
+        padding: 4px;
+      }
+
+      .tab-button {
+        background: transparent;
+        border: 0;
+        border-radius: 6px;
+        color: #d1d5db;
+        cursor: pointer;
+        min-height: 40px;
+        padding: 0 14px;
+      }
+
+      .tab-button.is-active {
+        background: #f8fafc;
+        color: #111827;
+      }
+
+      .tab-panel {
+        display: none;
+        position: relative;
+        z-index: 1;
+      }
+
+      .tab-panel.is-active {
+        display: block;
+      }
+
+      .visual-panel {
+        min-height: calc(100vh - 90px);
+      }
+
+      .hero-grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: minmax(300px, 0.72fr) minmax(520px, 1.28fr);
+        margin: 0 auto;
+        max-width: 1240px;
+        min-height: calc(100vh - 110px);
+        padding: 16px 24px 48px;
+      }
+
+      .narrative {
+        align-self: center;
       }
 
       h1 {
-        margin: 0 0 12px;
-        font-size: clamp(2rem, 6vw, 4rem);
-        line-height: 1;
+        font-size: clamp(2.8rem, 7vw, 6.3rem);
         letter-spacing: 0;
+        line-height: 0.92;
+        margin: 0 0 18px;
       }
 
-      p {
-        max-width: 720px;
+      .lead {
+        color: #d6d3d1;
+        font-size: 1.08rem;
+        line-height: 1.65;
         margin: 0 0 24px;
-        font-size: 1.05rem;
-        line-height: 1.6;
+        max-width: 620px;
       }
 
-      .eyebrow {
-        color: #6b7280;
+      .stage-controls {
+        display: grid;
+        gap: 10px;
+        margin-top: 24px;
+      }
+
+      .stage-button {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 8px;
+        color: #f8fafc;
+        cursor: pointer;
+        display: grid;
+        gap: 4px;
+        min-height: 72px;
+        padding: 12px 14px;
+        text-align: left;
+      }
+
+      .stage-button.is-active {
+        background: rgba(20, 184, 166, 0.18);
+        border-color: rgba(94, 234, 212, 0.7);
+      }
+
+      .stage-button strong {
+        font-size: 0.98rem;
+      }
+
+      .stage-button span {
+        color: #cbd5e1;
+        font-size: 0.84rem;
+      }
+
+      .graph-wrap {
+        align-self: stretch;
+        background: rgba(17, 24, 39, 0.52);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 8px;
+        min-height: 680px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .graph-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        padding: 18px 20px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .graph-header h2 {
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      .trace-pill {
+        background: rgba(15, 118, 110, 0.28);
+        border: 1px solid rgba(94, 234, 212, 0.5);
+        border-radius: 999px;
+        color: #ccfbf1;
         font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        margin-bottom: 12px;
-        text-transform: uppercase;
+        font-weight: 800;
+        padding: 6px 10px;
+      }
+
+      svg {
+        display: block;
+        height: calc(100% - 58px);
+        min-height: 620px;
+        width: 100%;
+      }
+
+      .edge {
+        stroke: rgba(148, 163, 184, 0.38);
+        stroke-width: 2;
+        transition: opacity 420ms ease, stroke 420ms ease, stroke-width 420ms ease;
+      }
+
+      .edge.fused {
+        stroke: #2dd4bf;
+        stroke-width: 4;
+      }
+
+      .edge.rejected {
+        stroke: rgba(248, 113, 113, 0.62);
+        stroke-dasharray: 6 9;
+      }
+
+      .node circle,
+      .node rect {
+        transition:
+          fill 420ms ease,
+          stroke 420ms ease,
+          opacity 420ms ease,
+          transform 420ms ease;
+      }
+
+      .node text {
+        fill: #f8fafc;
+        font-size: 14px;
+        font-weight: 800;
+        pointer-events: none;
+        text-anchor: middle;
+      }
+
+      .node .sub {
+        fill: #cbd5e1;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      .core circle {
+        fill: #111827;
+        stroke: #facc15;
+        stroke-width: 3;
+      }
+
+      .basis circle {
+        fill: #134e4a;
+        stroke: #5eead4;
+        stroke-width: 2;
+      }
+
+      .context circle {
+        fill: #1f2937;
+        opacity: 0;
+        stroke: #94a3b8;
+        stroke-width: 2;
+      }
+
+      .context text {
+        opacity: 0;
+      }
+
+      .context.valid circle {
+        stroke: #5eead4;
+      }
+
+      .context.text circle {
+        stroke: #fb923c;
+      }
+
+      .context.code circle {
+        stroke: #60a5fa;
+      }
+
+      .context.off circle {
+        stroke: #f87171;
+      }
+
+      .stage-task .context,
+      .stage-task .context-edge,
+      .stage-task .reject-edge,
+      .stage-task .fusion-edge {
+        opacity: 0;
+      }
+
+      .stage-saturation .context circle,
+      .stage-saturation .context text,
+      .stage-fusion .context circle,
+      .stage-fusion .context text {
+        opacity: 1;
+      }
+
+      .stage-saturation .context {
+        animation: floatNode 4.5s ease-in-out infinite alternate;
+      }
+
+      .stage-saturation .fusion-edge,
+      .stage-saturation .reject-edge {
+        opacity: 0.22;
+      }
+
+      .stage-fusion .fusion-edge {
+        opacity: 1;
+      }
+
+      .stage-fusion .reject-edge {
+        opacity: 0.72;
+      }
+
+      .stage-fusion .context.valid circle {
+        fill: #0f766e;
+        filter: drop-shadow(0 0 14px rgba(45, 212, 191, 0.55));
+      }
+
+      .stage-fusion .context.text circle,
+      .stage-fusion .context.code circle,
+      .stage-fusion .context.off circle {
+        fill: #3f1d1d;
+        filter: drop-shadow(0 0 10px rgba(248, 113, 113, 0.38));
+        stroke: #f87171;
+      }
+
+      .stage-fusion .basis circle {
+        filter: drop-shadow(0 0 14px rgba(45, 212, 191, 0.55));
+      }
+
+      @keyframes floatNode {
+        from {
+          transform: translateY(-2px);
+        }
+        to {
+          transform: translateY(6px);
+        }
+      }
+
+      .legend {
+        bottom: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        left: 20px;
+        position: absolute;
+        right: 20px;
+      }
+
+      .legend span {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 999px;
+        color: #e5e7eb;
+        font-size: 0.76rem;
+        padding: 6px 9px;
+      }
+
+      .agent-panel {
+        margin: 0 auto;
+        max-width: 1180px;
+        padding: 22px 24px 64px;
+      }
+
+      .agent-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+
+      .agent-intro {
+        color: #d6d3d1;
+        max-width: 760px;
       }
 
       .actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
-        margin-bottom: 40px;
+        gap: 10px;
+        margin: 22px 0 28px;
       }
 
-      a,
-      button {
-        border: 1px solid #1f2933;
-        border-radius: 6px;
-        background: #ffffff;
-        color: #1f2933;
+      .actions a,
+      .actions button {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        color: #f8fafc;
         cursor: pointer;
-        display: inline-flex;
-        align-items: center;
         min-height: 42px;
-        padding: 0 14px;
+        padding: 0 13px;
         text-decoration: none;
-        font: inherit;
       }
 
-      button {
-        background: #1f2933;
-        color: #ffffff;
+      .actions button {
+        background: #f8fafc;
+        color: #111827;
       }
 
-      pre {
-        border: 1px solid #c7c0b2;
-        border-radius: 6px;
-        background: #ffffff;
-        margin: 0;
-        overflow: auto;
-        padding: 18px;
-        min-height: 220px;
-        white-space: pre-wrap;
-      }
-
-      .grid {
-        display: grid;
-        gap: 16px;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      }
-
-      h2 {
-        font-size: 1.35rem;
-        margin: 0 0 12px;
-      }
-
-      h3 {
+      .api-block h3 {
         font-size: 1rem;
         margin: 0 0 8px;
       }
 
-      .story {
-        display: grid;
-        gap: 28px;
-        grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
-        margin: 32px 0 48px;
-      }
-
-      .steps {
-        display: grid;
-        gap: 18px;
-      }
-
-      .step {
-        border-left: 4px solid #d1d5db;
-        min-height: 260px;
-        padding: 24px 0 24px 20px;
-      }
-
-      .step.is-active {
-        border-left-color: #0f766e;
-      }
-
-      .step p {
-        color: #4b5563;
-        font-size: 0.98rem;
-        margin-bottom: 0;
-      }
-
-      .visual {
-        align-self: start;
-        background: #ffffff;
-        border: 1px solid #d1d5db;
+      pre {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: 8px;
-        min-height: 560px;
-        overflow: hidden;
-        position: sticky;
-        top: 20px;
-      }
-
-      .visual-head {
-        align-items: center;
-        border-bottom: 1px solid #e5e7eb;
-        display: flex;
-        justify-content: space-between;
-        padding: 14px 16px;
-      }
-
-      .status {
-        background: #eef2ff;
-        border: 1px solid #c7d2fe;
-        border-radius: 999px;
-        color: #3730a3;
-        font-size: 0.78rem;
-        font-weight: 700;
-        padding: 5px 9px;
-      }
-
-      .stage {
-        display: none;
-        padding: 20px;
-      }
-
-      .stage.is-active {
-        display: block;
-      }
-
-      .basis-board {
-        display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        margin-top: 18px;
-      }
-
-      .basis-node,
-      .report-node,
-      .noise-node {
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        background: #f9fafb;
-        min-height: 64px;
-        padding: 12px;
-      }
-
-      .basis-node {
-        background: #ecfdf5;
-        border-color: #99f6e4;
-      }
-
-      .node-label {
-        color: #111827;
-        font-size: 0.9rem;
-        font-weight: 700;
-      }
-
-      .node-detail {
-        color: #6b7280;
-        font-size: 0.78rem;
-        margin-top: 4px;
-      }
-
-      .context-field {
-        display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        margin-top: 18px;
-      }
-
-      .noise-node {
-        min-height: 92px;
-      }
-
-      .noise-node.valid {
-        background: #ecfdf5;
-        border-color: #5eead4;
-      }
-
-      .noise-node.text {
-        background: #fff7ed;
-        border-color: #fed7aa;
-      }
-
-      .noise-node.code {
-        background: #eff6ff;
-        border-color: #bfdbfe;
-      }
-
-      .noise-node.off {
-        background: #fef2f2;
-        border-color: #fecaca;
-      }
-
-      .fusion-map {
-        display: grid;
-        gap: 16px;
-        grid-template-columns: 1fr 1fr;
-        margin-top: 18px;
-      }
-
-      .bond-list,
-      .reject-list {
-        display: grid;
-        gap: 10px;
-      }
-
-      .report-node {
-        align-items: center;
-        display: grid;
-        grid-template-columns: 1fr auto;
-      }
-
-      .report-node.accepted {
-        background: #ecfdf5;
-        border-color: #2dd4bf;
-      }
-
-      .report-node.rejected {
-        background: #f8fafc;
-        border-color: #cbd5e1;
-        color: #64748b;
-      }
-
-      .bond {
-        color: #0f766e;
-        font-weight: 800;
-      }
-
-      .no-bond {
-        color: #b91c1c;
-        font-weight: 800;
-      }
-
-      .decision {
-        background: #111827;
-        border-radius: 8px;
-        color: #ffffff;
-        margin-top: 20px;
+        color: #e5e7eb;
+        margin: 0;
+        min-height: 220px;
+        overflow: auto;
         padding: 16px;
+        white-space: pre-wrap;
       }
 
-      .decision strong {
-        color: #5eead4;
-      }
+      @media (max-width: 900px) {
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
 
-      .api-demo {
-        border-top: 1px solid #d1d5db;
-        padding-top: 32px;
-      }
-
-      @media (max-width: 820px) {
-        .story {
+        .hero-grid {
           grid-template-columns: 1fr;
         }
 
-        .visual {
-          min-height: auto;
-          position: relative;
-          top: 0;
+        .graph-wrap {
+          min-height: 540px;
         }
 
-        .context-field,
-        .fusion-map {
-          grid-template-columns: 1fr;
+        svg {
+          min-height: 500px;
         }
       }
     </style>
   </head>
   <body>
-    <main>
-      <div class="eyebrow">Basis-Gated Memory Fusion</div>
-      <h1>NANDA Memory Fusion</h1>
-      <p>
-        A stateless verification API for basis-gated agent memory decisions. It is not a
-        long-term conversation memory store; it uses public demo data to show how a project
-        prompt creates a basis, how source text becomes saturation, and how the fusion engine
-        accepts or ignores reports.
-      </p>
-      <p>
-        Use it as a proof-of-concept and teaching harness, not production memory
-        infrastructure. For real deployments, port or self-host the pattern inside your own
-        trusted stack with persistence, authentication, provenance, and rate limits.
-      </p>
-      <p>
-        Deployment pattern example: use basis-gated fusion before or inside durable memory
-        workflows. It can run as an external pre-write gate, inside an LLM wiki workflow, or
-        as a local library in a trusted agent stack.
-      </p>
-      <div class="actions">
-        <a href="/skill.md">View SKILL.md</a>
-        <a href="/api/health">Health</a>
-        <a href="/api/scope">Scope</a>
-        <a href="/api/project-prompt">Project Prompt</a>
-        <a href="/api/source-text">Source Text</a>
-        <a href="/api/build-payload">Build Payload</a>
-        <a href="/api/verify-chain">Verify Chain</a>
-        <a href="/api/adversarial-suite">Adversarial Suite</a>
-        <button id="run-demo" type="button">Run Browser Chain</button>
-      </div>
-
-      <section class="story" aria-label="Visual explanation">
-        <div class="steps">
-          <article class="step is-active" data-stage="task">
-            <h2>1. Assemble the task graph</h2>
-            <p>
-              A project prompt creates a node and declares the only basis dimensions that can
-              count as evidence. Here, the calculator task needs add, subtract, multiply, and
-              divide before it can ship.
-            </p>
-          </article>
-          <article class="step" data-stage="saturation">
-            <h2>2. Context gets saturated</h2>
-            <p>
-              The agent sees useful reports mixed with narrative text, code-shaped content,
-              and an off-basis claim. The noisy items are present, but presence alone does not
-              make them actionable memory.
-            </p>
-          </article>
-          <article class="step" data-stage="fusion">
-            <h2>3. Only legal reports bond</h2>
-            <p>
-              Reports that restrict onto the declared basis fuse into the task node. Natural
-              language, code-shaped saturation, and horoscope evidence stay disconnected and
-              cannot move the PN-Counter score.
-            </p>
-          </article>
+    <main class="shell">
+      <div class="shader-field"></div>
+      <header class="topbar">
+        <div class="brand">
+          <span>Basis-Gated Fusion</span>
+          <strong>NANDA Memory Fusion</strong>
         </div>
+        <nav class="tabs" aria-label="Page sections">
+          <button class="tab-button is-active" type="button" data-tab="visual">Visual Model</button>
+          <button class="tab-button" type="button" data-tab="agent">Agent/API Details</button>
+        </nav>
+      </header>
 
-        <div class="visual" aria-live="polite">
-          <div class="visual-head">
-            <h2 id="visual-title">Task Graph</h2>
-            <span class="status" id="visual-status">basis declared</span>
-          </div>
+      <section class="tab-panel visual-panel is-active" id="visual-panel">
+        <div class="hero-grid">
+          <section class="narrative">
+            <h1>Memory That Only Bonds On Basis</h1>
+            <p class="lead">
+              A project prompt creates a typed task graph. Raw context can swarm around it,
+              but only reports that restrict onto the declared basis are allowed to become
+              actionable memory.
+            </p>
+            <p class="lead">
+              This hosted page is a proof-of-concept visualization. The same rule can run as
+              an external service, inside an LLM wiki workflow, or as a local library in a
+              trusted agent stack.
+            </p>
+            <div class="stage-controls" aria-label="Animation stages">
+              <button class="stage-button is-active" type="button" data-stage="task">
+                <strong>1. Task Graph Assembly</strong>
+                <span>The calculator node declares add, subtract, multiply, divide.</span>
+              </button>
+              <button class="stage-button" type="button" data-stage="saturation">
+                <strong>2. Context Saturation</strong>
+                <span>Useful reports arrive mixed with prose, code, and off-basis claims.</span>
+              </button>
+              <button class="stage-button" type="button" data-stage="fusion">
+                <strong>3. Basis Fusion</strong>
+                <span>Valid reports turn green and bond; non-fusable context stays red.</span>
+              </button>
+            </div>
+          </section>
 
-          <div class="stage is-active" data-stage-panel="task">
-            <h3>Project Prompt</h3>
-            <p>Create a calculator app that supports add, subtract, multiply, and divide.</p>
-            <div class="basis-board">
-              <div class="basis-node">
-                <div class="node-label">calculator.add</div>
-                <div class="node-detail">required basis</div>
-              </div>
-              <div class="basis-node">
-                <div class="node-label">calculator.subtract</div>
-                <div class="node-detail">required basis</div>
-              </div>
-              <div class="basis-node">
-                <div class="node-label">calculator.multiply</div>
-                <div class="node-detail">required basis</div>
-              </div>
-              <div class="basis-node">
-                <div class="node-label">calculator.divide</div>
-                <div class="node-detail">required basis</div>
-              </div>
+          <section class="graph-wrap" aria-label="Animated graph explanation">
+            <div class="graph-header">
+              <h2 id="graph-title">Task Graph Assembly</h2>
+              <span class="trace-pill" id="graph-pill">basis declared</span>
             </div>
-          </div>
 
-          <div class="stage" data-stage-panel="saturation">
-            <h3>Candidate Context</h3>
-            <p>The fusion gate receives structured evidence plus distracting payloads.</p>
-            <div class="context-field">
-              <div class="noise-node valid">
-                <div class="node-label">add report</div>
-                <div class="node-detail">basis: add</div>
-              </div>
-              <div class="noise-node valid">
-                <div class="node-label">subtract report</div>
-                <div class="node-detail">basis: subtract</div>
-              </div>
-              <div class="noise-node valid">
-                <div class="node-label">multiply report</div>
-                <div class="node-detail">basis: multiply</div>
-              </div>
-              <div class="noise-node valid">
-                <div class="node-label">divide report</div>
-                <div class="node-detail">basis: divide</div>
-              </div>
-              <div class="noise-node text">
-                <div class="node-label">Alice excerpt</div>
-                <div class="node-detail">text without basis</div>
-              </div>
-              <div class="noise-node code">
-                <div class="node-label">AMDGPU code</div>
-                <div class="node-detail">code-shaped saturation</div>
-              </div>
-              <div class="noise-node off">
-                <div class="node-label">horoscope claim</div>
-                <div class="node-detail">basis: horoscope</div>
-              </div>
-            </div>
-          </div>
+            <svg id="fusion-graph" class="stage-task" viewBox="0 0 900 680" role="img" aria-label="Basis fusion graph">
+              <defs>
+                <filter id="softGlow">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
 
-          <div class="stage" data-stage-panel="fusion">
-            <h3>Fusion Result</h3>
-            <p>Accepted reports increase the PN-Counter. Non-fusable inputs remain outside.</p>
-            <div class="fusion-map">
-              <div>
-                <h3>Bonded</h3>
-                <div class="bond-list">
-                  <div class="report-node accepted"><span>add</span><span class="bond">+1</span></div>
-                  <div class="report-node accepted"><span>subtract</span><span class="bond">+1</span></div>
-                  <div class="report-node accepted"><span>multiply</span><span class="bond">+1</span></div>
-                  <div class="report-node accepted"><span>divide</span><span class="bond">+1</span></div>
-                </div>
-              </div>
-              <div>
-                <h3>Disconnected</h3>
-                <div class="reject-list">
-                  <div class="report-node rejected"><span>Alice text</span><span class="no-bond">ignored</span></div>
-                  <div class="report-node rejected"><span>AMDGPU code</span><span class="no-bond">ignored</span></div>
-                  <div class="report-node rejected"><span>horoscope</span><span class="no-bond">off-basis</span></div>
-                </div>
-              </div>
+              <g class="basis-edges">
+                <line class="edge" x1="450" y1="330" x2="450" y2="135" />
+                <line class="edge" x1="450" y1="330" x2="660" y2="300" />
+                <line class="edge" x1="450" y1="330" x2="450" y2="530" />
+                <line class="edge" x1="450" y1="330" x2="240" y2="300" />
+              </g>
+
+              <g class="context-edges">
+                <line class="edge fusion-edge fused" x1="450" y1="135" x2="235" y2="105" />
+                <line class="edge fusion-edge fused" x1="660" y1="300" x2="760" y2="120" />
+                <line class="edge fusion-edge fused" x1="450" y1="530" x2="680" y2="575" />
+                <line class="edge fusion-edge fused" x1="240" y1="300" x2="130" y2="535" />
+                <line class="edge reject-edge rejected" x1="450" y1="330" x2="145" y2="180" />
+                <line class="edge reject-edge rejected" x1="450" y1="330" x2="775" y2="420" />
+                <line class="edge reject-edge rejected" x1="450" y1="330" x2="450" y2="70" />
+              </g>
+
+              <g class="node core" filter="url(#softGlow)">
+                <circle cx="450" cy="330" r="76" />
+                <text x="450" y="324">calculator</text>
+                <text class="sub" x="450" y="345">project node</text>
+              </g>
+
+              <g class="node basis">
+                <circle cx="450" cy="135" r="48" />
+                <text x="450" y="132">add</text>
+                <text class="sub" x="450" y="151">basis</text>
+              </g>
+              <g class="node basis">
+                <circle cx="660" cy="300" r="54" />
+                <text x="660" y="297">subtract</text>
+                <text class="sub" x="660" y="316">basis</text>
+              </g>
+              <g class="node basis">
+                <circle cx="450" cy="530" r="54" />
+                <text x="450" y="527">multiply</text>
+                <text class="sub" x="450" y="546">basis</text>
+              </g>
+              <g class="node basis">
+                <circle cx="240" cy="300" r="48" />
+                <text x="240" y="297">divide</text>
+                <text class="sub" x="240" y="316">basis</text>
+              </g>
+
+              <g class="node context valid">
+                <circle cx="235" cy="105" r="44" />
+                <text x="235" y="103">+ add</text>
+                <text class="sub" x="235" y="121">report</text>
+              </g>
+              <g class="node context valid">
+                <circle cx="760" cy="120" r="48" />
+                <text x="760" y="118">+ subtract</text>
+                <text class="sub" x="760" y="136">report</text>
+              </g>
+              <g class="node context valid">
+                <circle cx="680" cy="575" r="50" />
+                <text x="680" y="573">+ multiply</text>
+                <text class="sub" x="680" y="591">report</text>
+              </g>
+              <g class="node context valid">
+                <circle cx="130" cy="535" r="44" />
+                <text x="130" y="533">+ divide</text>
+                <text class="sub" x="130" y="551">report</text>
+              </g>
+
+              <g class="node context text">
+                <circle cx="145" cy="180" r="48" />
+                <text x="145" y="178">Alice</text>
+                <text class="sub" x="145" y="196">no basis</text>
+              </g>
+              <g class="node context code">
+                <circle cx="775" cy="420" r="52" />
+                <text x="775" y="418">AMDGPU</text>
+                <text class="sub" x="775" y="436">code blob</text>
+              </g>
+              <g class="node context off">
+                <circle cx="450" cy="70" r="42" />
+                <text x="450" y="68">stars</text>
+                <text class="sub" x="450" y="86">off-basis</text>
+              </g>
+            </svg>
+
+            <div class="legend">
+              <span>green: legal basis reports</span>
+              <span>red: detached context</span>
+              <span>score: 4 / 4</span>
+              <span>decision: ship</span>
             </div>
-            <div class="decision">
-              PN-Counter score: <strong>4 / 4</strong><br />
-              Decision: <strong>SHIP</strong><br />
-              Trace: decision|calculator|ship|score=4|ignored=3
-            </div>
-          </div>
+          </section>
         </div>
       </section>
 
-      <section class="api-demo">
-        <h2>Live API Chain</h2>
-        <p>
-          The visual story above is backed by public endpoints. Run the browser chain to
-          inspect the exact JSON for scope, project prompt, source text, payload construction,
-          verification, and adversarial probes.
+      <section class="tab-panel agent-panel" id="agent-panel">
+        <h1>Agent/API Details</h1>
+        <p class="agent-intro">
+          The visual model is backed by public endpoints. Browser-only agents can inspect the
+          full chain without custom POST requests; terminal-capable agents can also call
+          <code>POST /api/fuse</code> with synthetic payloads.
         </p>
-      <div class="grid">
-        <section>
-          <h2>Scope</h2>
-          <pre id="scope">Click Run Browser Chain to load /api/scope.</pre>
-        </section>
-        <section>
-          <h2>Project Prompt</h2>
-          <pre id="project">Click Run Browser Chain to load /api/project-prompt.</pre>
-        </section>
-        <section>
-          <h2>Source Text</h2>
-          <pre id="source">Click Run Browser Chain to load /api/source-text.</pre>
-        </section>
-        <section>
-          <h2>Constructed Payload</h2>
-          <pre id="payload">Click Run Browser Chain to load /api/build-payload.</pre>
-        </section>
-        <section>
-          <h2>Live Verification</h2>
-          <pre id="output">Click Run Browser Chain to call /api/verify-chain.</pre>
-        </section>
-        <section>
-          <h2>GET-Only Adversarial Suite</h2>
-          <pre id="suite">Click Run Browser Chain to call /api/adversarial-suite.</pre>
-        </section>
-      </div>
+
+        <div class="actions">
+          <a href="/skill.md">View SKILL.md</a>
+          <a href="/api/health">Health</a>
+          <a href="/api/scope">Scope</a>
+          <a href="/api/project-prompt">Project Prompt</a>
+          <a href="/api/source-text">Source Text</a>
+          <a href="/api/build-payload">Build Payload</a>
+          <a href="/api/verify-chain">Verify Chain</a>
+          <a href="/api/adversarial-suite">Adversarial Suite</a>
+          <button id="run-demo" type="button">Run Browser Chain</button>
+        </div>
+
+        <div class="agent-grid">
+          <section class="api-block">
+            <h3>Scope</h3>
+            <pre id="scope">Click Run Browser Chain to load /api/scope.</pre>
+          </section>
+          <section class="api-block">
+            <h3>Project Prompt</h3>
+            <pre id="project">Click Run Browser Chain to load /api/project-prompt.</pre>
+          </section>
+          <section class="api-block">
+            <h3>Source Text</h3>
+            <pre id="source">Click Run Browser Chain to load /api/source-text.</pre>
+          </section>
+          <section class="api-block">
+            <h3>Constructed Payload</h3>
+            <pre id="payload">Click Run Browser Chain to load /api/build-payload.</pre>
+          </section>
+          <section class="api-block">
+            <h3>Live Verification</h3>
+            <pre id="output">Click Run Browser Chain to call /api/verify-chain.</pre>
+          </section>
+          <section class="api-block">
+            <h3>GET-Only Adversarial Suite</h3>
+            <pre id="suite">Click Run Browser Chain to call /api/adversarial-suite.</pre>
+          </section>
+        </div>
       </section>
     </main>
+
     <script>
-      const titles = {
-        task: ["Task Graph", "basis declared"],
-        saturation: ["Context Saturation", "mixed reports"],
-        fusion: ["Fusion Gate", "ship after legal fusion"]
+      const tabButtons = Array.from(document.querySelectorAll(".tab-button"));
+      const tabPanels = {
+        visual: document.querySelector("#visual-panel"),
+        agent: document.querySelector("#agent-panel")
       };
 
-      const steps = Array.from(document.querySelectorAll(".step"));
-      const panels = Array.from(document.querySelectorAll("[data-stage-panel]"));
-      const visualTitle = document.querySelector("#visual-title");
-      const visualStatus = document.querySelector("#visual-status");
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = button.dataset.tab;
+          tabButtons.forEach((item) => item.classList.toggle("is-active", item === button));
+          Object.entries(tabPanels).forEach(([key, panel]) => {
+            panel.classList.toggle("is-active", key === target);
+          });
+        });
+      });
 
-      function activateStage(stage) {
-        steps.forEach((step) => step.classList.toggle("is-active", step.dataset.stage === stage));
-        panels.forEach((panel) => panel.classList.toggle("is-active", panel.dataset.stagePanel === stage));
-        const [title, status] = titles[stage];
-        visualTitle.textContent = title;
-        visualStatus.textContent = status;
+      const graph = document.querySelector("#fusion-graph");
+      const graphTitle = document.querySelector("#graph-title");
+      const graphPill = document.querySelector("#graph-pill");
+      const stageButtons = Array.from(document.querySelectorAll(".stage-button"));
+      const stageCopy = {
+        task: ["Task Graph Assembly", "basis declared"],
+        saturation: ["Context Saturation", "mixed reports"],
+        fusion: ["Basis Fusion", "ship after legal fusion"]
+      };
+
+      function setStage(stage) {
+        graph.classList.remove("stage-task", "stage-saturation", "stage-fusion");
+        graph.classList.add(`stage-${stage}`);
+        graphTitle.textContent = stageCopy[stage][0];
+        graphPill.textContent = stageCopy[stage][1];
+        stageButtons.forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.stage === stage);
+        });
       }
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const visible = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-          if (visible) {
-            activateStage(visible.target.dataset.stage);
-          }
-        },
-        { threshold: [0.35, 0.6, 0.85] }
-      );
-
-      steps.forEach((step) => observer.observe(step));
+      stageButtons.forEach((button) => {
+        button.addEventListener("click", () => setStage(button.dataset.stage));
+      });
 
       document.querySelector("#run-demo").addEventListener("click", async () => {
-        const project = document.querySelector("#project");
-        const scope = document.querySelector("#scope");
-        const source = document.querySelector("#source");
-        const payload = document.querySelector("#payload");
-        const output = document.querySelector("#output");
-        const suite = document.querySelector("#suite");
-        project.textContent = "Loading /api/project-prompt...";
-        scope.textContent = "Loading /api/scope...";
-        source.textContent = "Loading /api/source-text...";
-        payload.textContent = "Loading /api/build-payload...";
-        output.textContent = "Calling /api/verify-chain...";
-        suite.textContent = "Calling /api/adversarial-suite...";
-        const projectResponse = await fetch("/api/project-prompt");
-        const scopeResponse = await fetch("/api/scope");
-        const sourceResponse = await fetch("/api/source-text");
-        const payloadResponse = await fetch("/api/build-payload");
-        const verifyResponse = await fetch("/api/verify-chain");
-        const suiteResponse = await fetch("/api/adversarial-suite");
-        project.textContent = JSON.stringify(await projectResponse.json(), null, 2);
-        scope.textContent = JSON.stringify(await scopeResponse.json(), null, 2);
-        source.textContent = JSON.stringify(await sourceResponse.json(), null, 2);
-        payload.textContent = JSON.stringify(await payloadResponse.json(), null, 2);
-        output.textContent = JSON.stringify(await verifyResponse.json(), null, 2);
-        suite.textContent = JSON.stringify(await suiteResponse.json(), null, 2);
+        const fields = {
+          scope: "/api/scope",
+          project: "/api/project-prompt",
+          source: "/api/source-text",
+          payload: "/api/build-payload",
+          output: "/api/verify-chain",
+          suite: "/api/adversarial-suite"
+        };
+
+        await Promise.all(
+          Object.entries(fields).map(async ([id, url]) => {
+            const target = document.querySelector(`#${id}`);
+            target.textContent = `Loading ${url}...`;
+            const response = await fetch(url);
+            target.textContent = JSON.stringify(await response.json(), null, 2);
+          })
+        );
       });
     </script>
   </body>
