@@ -1,4 +1,6 @@
 import http from "node:http";
+import fs from "node:fs/promises";
+import path from "node:path";
 import examplesHandler from "./api/examples.js";
 import demoRunHandler from "./api/demo-run.js";
 import fuseHandler from "./api/fuse.js";
@@ -12,6 +14,7 @@ import sourceTextHandler from "./api/source-text.js";
 import verifyChainHandler from "./api/verify-chain.js";
 
 const port = Number(process.env.PORT ?? 3000);
+const publicIndexPath = path.resolve("public", "index.html");
 
 function createResponse(serverResponse) {
   return {
@@ -71,9 +74,8 @@ const server = http.createServer(async (request, serverResponse) => {
     } else if (url.pathname === "/skill.md") {
       skillHandler(request, response);
     } else if (url.pathname === "/") {
-      serverResponse.statusCode = 302;
-      serverResponse.setHeader("Location", "/skill.md");
-      serverResponse.end();
+      serverResponse.setHeader("Content-Type", "text/html; charset=utf-8");
+      serverResponse.end(await fs.readFile(publicIndexPath, "utf8"));
     } else {
       response.status(404).json({ error: "not_found" });
     }
