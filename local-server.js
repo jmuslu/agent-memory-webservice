@@ -6,6 +6,7 @@ import healthHandler from "./api/health.js";
 import buildPayloadHandler from "./api/build-payload.js";
 import adversarialSuiteHandler from "./api/adversarial-suite.js";
 import projectPromptHandler from "./api/project-prompt.js";
+import scopeHandler from "./api/scope.js";
 import skillHandler from "./api/skill.js";
 import sourceTextHandler from "./api/source-text.js";
 import verifyChainHandler from "./api/verify-chain.js";
@@ -49,6 +50,8 @@ const server = http.createServer(async (request, serverResponse) => {
 
     if (url.pathname === "/api/health") {
       healthHandler(request, response);
+    } else if (url.pathname === "/api/scope") {
+      scopeHandler(request, response);
     } else if (url.pathname === "/api/project-prompt") {
       projectPromptHandler(request, response);
     } else if (url.pathname === "/api/source-text") {

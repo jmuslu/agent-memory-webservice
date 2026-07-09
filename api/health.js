@@ -4,6 +4,7 @@ export default function handler(_request, response) {
     service: "NANDA Memory Fusion",
     endpoints: [
       "GET /api/health",
+      "GET /api/scope",
       "GET /api/project-prompt",
       "GET /api/source-text",
       "GET /api/build-payload",

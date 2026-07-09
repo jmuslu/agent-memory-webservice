@@ -8,6 +8,8 @@ https://agent-memory-webservice.vercel.app/skill.md
 
 Do not assume the API contract from memory. First fetch/read the skill file, then call the service it describes.
 
+Important scope note: evaluate this as a stateless public verification demo, not as a production long-term memory store. Use only the synthetic payload below. Do not send private user data.
+
 Evaluate this task setup:
 
 ```json

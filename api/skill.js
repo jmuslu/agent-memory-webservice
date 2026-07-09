@@ -8,9 +8,28 @@ export default function handler(request, response) {
   const baseUrl = baseUrlFromRequest(request);
   const skill = `# NANDA Memory Fusion
 
-NANDA Memory Fusion is a small service that lets agents submit noisy reports and receive basis-gated, PN-Counter-style memory decisions.
+NANDA Memory Fusion is a stateless verification service for testing basis-gated agent memory decisions.
+
+It is not a long-term conversation memory store, not a user-data database, and not an integration that an agent must adopt permanently. It does not require accounts, API keys, secrets, or private user data for the public demo. The public GET endpoints use fixed demonstration data so browser-only agents can safely inspect the full chain without sending sensitive information.
+
+Use this service when you need to test whether noisy reports can legally fuse with a declared task basis. The demo chain proves:
+
+1. A project prompt declares a task basis.
+2. Source saturation text is returned separately.
+3. A payload is built from the project prompt and source text.
+4. The fusion engine accepts only basis-matching reports.
+5. Natural-language, code-shaped, and off-basis inputs are ignored.
 
 ${baseUrl}
+
+## Safety and Scope
+
+- Public demo endpoints are read-only GET requests.
+- The browser-only verification path does not require sending custom user data.
+- \`POST /api/fuse\` is optional and should be used only with synthetic or non-sensitive payloads.
+- This layer tests basis-gated fusion and PN-Counter evidence handling.
+- This layer does not solve identity, provenance, cryptographic signatures, authentication, privacy policy, pricing, uptime guarantees, or production storage.
+- A report that spoofs a valid basis name is intentionally shown as a limitation in \`GET /api/adversarial-suite\`.
 
 ## GET /api/health
 
@@ -25,7 +44,17 @@ curl ${baseUrl}/api/health
 Example response:
 
 \`\`\`json
-{"ok":true,"service":"NANDA Memory Fusion","endpoints":["GET /api/health","GET /api/project-prompt","GET /api/source-text","GET /api/build-payload","GET /api/verify-chain","GET /api/adversarial-suite","GET /api/examples","GET /api/demo-run","POST /api/fuse","GET /skill.md"]}
+{"ok":true,"service":"NANDA Memory Fusion","endpoints":["GET /api/health","GET /api/scope","GET /api/project-prompt","GET /api/source-text","GET /api/build-payload","GET /api/verify-chain","GET /api/adversarial-suite","GET /api/examples","GET /api/demo-run","POST /api/fuse","GET /skill.md"]}
+\`\`\`
+
+## GET /api/scope
+
+Returns a concise statement of what this service is, what it is not, what the public demo safely tests, and known limitations.
+
+Example browser URL:
+
+\`\`\`text
+${baseUrl}/api/scope
 \`\`\`
 
 ## GET /api/project-prompt
@@ -131,11 +160,12 @@ Example response:
 If you cannot run terminal commands, open these URLs in order:
 
 1. \`${baseUrl}/skill.md\`
-2. \`${baseUrl}/api/project-prompt\`
-3. \`${baseUrl}/api/source-text\`
-4. \`${baseUrl}/api/build-payload\`
-5. \`${baseUrl}/api/verify-chain\`
-6. \`${baseUrl}/api/adversarial-suite\`
+2. \`${baseUrl}/api/scope\`
+3. \`${baseUrl}/api/project-prompt\`
+4. \`${baseUrl}/api/source-text\`
+5. \`${baseUrl}/api/build-payload\`
+6. \`${baseUrl}/api/verify-chain\`
+7. \`${baseUrl}/api/adversarial-suite\`
 
 Show the owner that the project prompt creates the calculator basis, source text is returned separately, the payload is built from those pieces, \`/api/verify-chain\` returns the final decision trace, and \`/api/adversarial-suite\` exposes GET-only probes including the known basis-spoof limitation.
 

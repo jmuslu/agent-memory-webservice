@@ -1,6 +1,8 @@
 # NANDA Memory Fusion Service
 
-This is a small NandaHack Phase 2 web service. It exposes a basis-gated memory fusion API that agents can call when they need to separate actionable evidence from irrelevant context saturation.
+This is a small NandaHack Phase 2 web service. It exposes a stateless basis-gated memory fusion API that agents can call when they need to separate actionable evidence from irrelevant context saturation.
+
+It is not a long-term conversation memory store and does not require accounts, secrets, or private user data for the public demo. The browser verification flow uses fixed public demonstration data.
 
 ## Endpoints
 
