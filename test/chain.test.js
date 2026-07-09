@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { buildPayload, projectPrompt, sourceText, verifyChain } from "../api/chain.js";
+import { buildPayload, projectPrompt, runAdversarialSuite, sourceText, verifyChain } from "../api/chain.js";
 
 test("builds payload from project prompt and separate source text", () => {
   const payload = buildPayload();
@@ -12,6 +12,17 @@ test("builds payload from project prompt and separate source text", () => {
   assert.ok(payload.reports.some((report) => report.source_id === sourceText.natural_language.id));
   assert.ok(payload.reports.some((report) => report.source_id === sourceText.code_shaped.id));
   assert.ok(payload.reports.some((report) => report.basis === "horoscope"));
+});
+
+test("adversarial suite exposes GET-only probes and basis-spoof limitation", () => {
+  const suite = runAdversarialSuite();
+  const casesById = Object.fromEntries(suite.cases.map((testCase) => [testCase.id, testCase]));
+
+  assert.equal(casesById["huge-off-basis-delta"].audit.huge_off_basis_ignored, true);
+  assert.equal(casesById["huge-off-basis-delta"].result.decision, "wait");
+  assert.equal(casesById["fractional-valid-evidence"].audit.fractional_rejected, true);
+  assert.equal(casesById["basis-name-spoof"].expected_limitation, true);
+  assert.equal(casesById["basis-name-spoof"].audit.spoofed_valid_basis_accepted, true);
 });
 
 test("verify chain proves basis fusion and saturation rejection", () => {

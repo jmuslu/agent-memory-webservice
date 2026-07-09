@@ -57,6 +57,19 @@ Then verify the full service chain in this browser-only order:
    - whether the calculator task should ship
    - the final trace line
 
+10. Open the GET-only adversarial suite:
+
+   ```text
+   https://agent-memory-webservice.vercel.app/api/adversarial-suite
+   ```
+
+11. Show the agent owner:
+   - whether a huge off-basis delta was ignored
+   - whether fractional evidence was rejected
+   - how negative signed evidence changes the score
+   - whether a spoofed report using a valid basis name was accepted
+   - that basis-name spoofing is reported as a known limitation of this basis-only memory layer, not hidden as solved provenance/authentication
+
 The expected successful trace is:
 
 ```text

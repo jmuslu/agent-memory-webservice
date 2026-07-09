@@ -8,6 +8,7 @@ export default function handler(_request, response) {
       "GET /api/source-text",
       "GET /api/build-payload",
       "GET /api/verify-chain",
+      "GET /api/adversarial-suite",
       "GET /api/examples",
       "GET /api/demo-run",
       "POST /api/fuse",

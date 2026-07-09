@@ -49,7 +49,8 @@ Paste the whole prompt into a fresh chat session that can browse but cannot run 
 3. Open `https://agent-memory-webservice.vercel.app/api/source-text` to show source saturation text separately.
 4. Open `https://agent-memory-webservice.vercel.app/api/build-payload` to show the constructed payload.
 5. Open `https://agent-memory-webservice.vercel.app/api/verify-chain` to show the live result and audit flags.
-6. Report the final trace:
+6. Open `https://agent-memory-webservice.vercel.app/api/adversarial-suite` to show GET-only adversarial probes and the explicit basis-spoof limitation.
+7. Report the final trace:
 
 ```text
 decision|calculator|ship|score=4|ignored=3

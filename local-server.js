@@ -4,6 +4,7 @@ import demoRunHandler from "./api/demo-run.js";
 import fuseHandler from "./api/fuse.js";
 import healthHandler from "./api/health.js";
 import buildPayloadHandler from "./api/build-payload.js";
+import adversarialSuiteHandler from "./api/adversarial-suite.js";
 import projectPromptHandler from "./api/project-prompt.js";
 import skillHandler from "./api/skill.js";
 import sourceTextHandler from "./api/source-text.js";
@@ -56,6 +57,8 @@ const server = http.createServer(async (request, serverResponse) => {
       buildPayloadHandler(request, response);
     } else if (url.pathname === "/api/verify-chain") {
       verifyChainHandler(request, response);
+    } else if (url.pathname === "/api/adversarial-suite") {
+      adversarialSuiteHandler(request, response);
     } else if (url.pathname === "/api/examples") {
       examplesHandler(request, response);
     } else if (url.pathname === "/api/demo-run") {

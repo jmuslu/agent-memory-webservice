@@ -25,7 +25,7 @@ curl ${baseUrl}/api/health
 Example response:
 
 \`\`\`json
-{"ok":true,"service":"NANDA Memory Fusion","endpoints":["GET /api/health","GET /api/project-prompt","GET /api/source-text","GET /api/build-payload","GET /api/verify-chain","GET /api/examples","GET /api/demo-run","POST /api/fuse","GET /skill.md"]}
+{"ok":true,"service":"NANDA Memory Fusion","endpoints":["GET /api/health","GET /api/project-prompt","GET /api/source-text","GET /api/build-payload","GET /api/verify-chain","GET /api/adversarial-suite","GET /api/examples","GET /api/demo-run","POST /api/fuse","GET /skill.md"]}
 \`\`\`
 
 ## GET /api/project-prompt
@@ -80,6 +80,18 @@ Example response:
 {"audit":{"basis_tied_to_project_prompt":true,"natural_language_saturation_ignored":true,"code_shaped_saturation_ignored":true,"off_basis_horoscope_ignored":true,"final_trace":"decision|calculator|ship|score=4|ignored=3"}}
 \`\`\`
 
+## GET /api/adversarial-suite
+
+Runs GET-only adversarial probes against the same fusion engine. This is useful for browser-only agents that cannot send custom POST requests.
+
+Example browser URL:
+
+\`\`\`text
+${baseUrl}/api/adversarial-suite
+\`\`\`
+
+The suite checks huge off-basis deltas, negative signed evidence, fractional evidence rejection, and a basis-name spoof case. The spoof case is intentionally reported as a limitation: this memory layer gates by declared basis, but source authentication/provenance is a separate layer.
+
 ## POST /api/fuse
 
 Fuses reports into a named memory node only when each report has a legal basis dimension; irrelevant text, code-shaped saturation, wrong-node reports, and off-basis claims are ignored.
@@ -123,8 +135,9 @@ If you cannot run terminal commands, open these URLs in order:
 3. \`${baseUrl}/api/source-text\`
 4. \`${baseUrl}/api/build-payload\`
 5. \`${baseUrl}/api/verify-chain\`
+6. \`${baseUrl}/api/adversarial-suite\`
 
-Show the owner that the project prompt creates the calculator basis, source text is returned separately, the payload is built from those pieces, and \`/api/verify-chain\` returns the final decision trace.
+Show the owner that the project prompt creates the calculator basis, source text is returned separately, the payload is built from those pieces, \`/api/verify-chain\` returns the final decision trace, and \`/api/adversarial-suite\` exposes GET-only probes including the known basis-spoof limitation.
 
 ## How an agent should use this service
 

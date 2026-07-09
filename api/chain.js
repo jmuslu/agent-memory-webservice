@@ -109,4 +109,84 @@ function verifyChain() {
   };
 }
 
-export { buildPayload, projectPrompt, sourceText, verifyChain };
+function runAdversarialSuite() {
+  const basePayload = buildPayload();
+  const cases = [
+    {
+      id: "canonical-chain",
+      claim: "valid project evidence fuses while saturation and off-basis claims are ignored",
+      payload: basePayload
+    },
+    {
+      id: "huge-off-basis-delta",
+      claim: "a huge off-basis delta cannot force a ship decision",
+      payload: {
+        ...basePayload,
+        reports: [
+          { id: "project-evidence-add", node: projectPrompt.node, basis: "add", delta: 1 },
+          { id: "huge-horoscope", node: projectPrompt.node, basis: "horoscope", delta: 1000000 }
+        ]
+      }
+    },
+    {
+      id: "negative-valid-evidence",
+      claim: "negative signed evidence is preserved instead of discarded",
+      payload: {
+        ...basePayload,
+        reports: [
+          { id: "project-evidence-add", node: projectPrompt.node, basis: "add", delta: 1 },
+          { id: "project-evidence-subtract", node: projectPrompt.node, basis: "subtract", delta: -1 },
+          { id: "project-evidence-multiply", node: projectPrompt.node, basis: "multiply", delta: 1 },
+          { id: "project-evidence-divide", node: projectPrompt.node, basis: "divide", delta: 1 }
+        ]
+      }
+    },
+    {
+      id: "fractional-valid-evidence",
+      claim: "fractional evidence is rejected to preserve integer-coordinate PN-Counter semantics",
+      payload: {
+        ...basePayload,
+        reports: [{ id: "fractional-add", node: projectPrompt.node, basis: "add", delta: 1.5 }]
+      }
+    },
+    {
+      id: "basis-name-spoof",
+      claim:
+        "a report that spoofs a valid basis name is accepted by this basis-only layer; provenance/authentication is a separate layer",
+      payload: {
+        ...basePayload,
+        reports: [{ id: "spoofed-add", node: projectPrompt.node, basis: "add", delta: 1, source_id: "unknown-attacker" }]
+      },
+      expected_limitation: true
+    }
+  ];
+
+  return {
+    suite: "browser-get-adversarial-memory-fusion",
+    note:
+      "These cases are runnable by GET-only/browser-only agents. They test basis gating and PN-Counter behavior, not cryptographic source authentication.",
+    cases: cases.map((testCase) => {
+      const result = fuseMemory(testCase.payload);
+      const ignoredById = Object.fromEntries(result.ignored.map((item) => [item.id, item]));
+      return {
+        id: testCase.id,
+        claim: testCase.claim,
+        expected_limitation: Boolean(testCase.expected_limitation),
+        payload: testCase.payload,
+        result,
+        audit: {
+          decision: result.decision,
+          score: result.score,
+          accepted_ids: result.accepted.map((item) => item.id),
+          ignored_ids: result.ignored.map((item) => item.id),
+          final_trace: result.trace.at(-1),
+          huge_off_basis_ignored: ignoredById["huge-horoscope"]?.reason === "off_basis",
+          fractional_rejected: ignoredById["fractional-add"]?.reason === "invalid_delta",
+          spoofed_valid_basis_accepted: result.accepted.some((item) => item.id === "spoofed-add")
+        }
+      };
+    })
+  };
+}
+
+export { buildPayload, projectPrompt, runAdversarialSuite, sourceText, verifyChain };

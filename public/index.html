@@ -104,6 +104,7 @@
         <a href="/api/source-text">Source Text</a>
         <a href="/api/build-payload">Build Payload</a>
         <a href="/api/verify-chain">Verify Chain</a>
+        <a href="/api/adversarial-suite">Adversarial Suite</a>
         <button id="run-demo" type="button">Run Browser Chain</button>
       </div>
       <div class="grid">
@@ -123,6 +124,10 @@
           <h2>Live Verification</h2>
           <pre id="output">Click Run Browser Chain to call /api/verify-chain.</pre>
         </section>
+        <section>
+          <h2>GET-Only Adversarial Suite</h2>
+          <pre id="suite">Click Run Browser Chain to call /api/adversarial-suite.</pre>
+        </section>
       </div>
     </main>
     <script>
@@ -131,18 +136,22 @@
         const source = document.querySelector("#source");
         const payload = document.querySelector("#payload");
         const output = document.querySelector("#output");
+        const suite = document.querySelector("#suite");
         project.textContent = "Loading /api/project-prompt...";
         source.textContent = "Loading /api/source-text...";
         payload.textContent = "Loading /api/build-payload...";
         output.textContent = "Calling /api/verify-chain...";
+        suite.textContent = "Calling /api/adversarial-suite...";
         const projectResponse = await fetch("/api/project-prompt");
         const sourceResponse = await fetch("/api/source-text");
         const payloadResponse = await fetch("/api/build-payload");
         const verifyResponse = await fetch("/api/verify-chain");
+        const suiteResponse = await fetch("/api/adversarial-suite");
         project.textContent = JSON.stringify(await projectResponse.json(), null, 2);
         source.textContent = JSON.stringify(await sourceResponse.json(), null, 2);
         payload.textContent = JSON.stringify(await payloadResponse.json(), null, 2);
         output.textContent = JSON.stringify(await verifyResponse.json(), null, 2);
+        suite.textContent = JSON.stringify(await suiteResponse.json(), null, 2);
       });
     </script>
   </body>
