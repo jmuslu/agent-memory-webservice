@@ -22,9 +22,15 @@ export default function handler(_request, response) {
       "PN-Counter signed evidence handling",
       "natural-language/code-shaped/off-basis rejection"
     ],
-    product_direction: {
-      role: "clean-room memory gate before durable memory writes",
-      intended_architecture: [
+    deployment_pattern_example: {
+      role: "basis-gated fusion before or inside durable memory workflows",
+      possible_locations: [
+        "external pre-write gate",
+        "internal LLM wiki workflow",
+        "agent memory pipeline",
+        "local library inside a trusted stack"
+      ],
+      example_architecture: [
         "agent researches the web",
         "agent extracts candidate reports",
         "agent submits reports to the fusion gate",
@@ -32,7 +38,7 @@ export default function handler(_request, response) {
         "accepted evidence is written to durable memory, a wiki, or a vector database"
       ],
       why_stateless:
-        "The service verifies what is allowed to become memory before a separate memory store persists it."
+        "The hosted demo shows the fusion rule without claiming to be the memory database itself."
     },
     known_limitations: [
       "basis-name spoofing is accepted by this basis-only layer",
