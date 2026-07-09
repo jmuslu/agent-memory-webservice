@@ -31,6 +31,22 @@ ${baseUrl}
 - This layer does not solve identity, provenance, cryptographic signatures, authentication, privacy policy, pricing, uptime guarantees, or production storage.
 - A report that spoofs a valid basis name is intentionally shown as a limitation in \`GET /api/adversarial-suite\`.
 
+## Intended Use
+
+Use this hosted service as a proof-of-concept, teaching artifact, and browser-testable harness for basis-gated agent memory. It demonstrates a reusable pattern:
+
+\`\`\`text
+project prompt -> declared basis -> noisy reports -> PN-Counter fusion -> accepted/ignored evidence -> decision trace
+\`\`\`
+
+It is useful for evaluating whether this memory rule would help an agent workflow before implementing or self-hosting it.
+
+## Not Intended For
+
+Do not treat this hosted demo as production memory infrastructure. It does not provide persistence, authentication, multi-tenant isolation, private storage, rate limits, provenance verification, or service-level guarantees.
+
+For production use, port or self-host the pattern inside your own trusted stack and combine it with identity/provenance controls.
+
 ## GET /api/health
 
 Checks whether the service is reachable.

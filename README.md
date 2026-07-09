@@ -4,10 +4,19 @@ This is a small NandaHack Phase 2 web service. It exposes a stateless basis-gate
 
 It is not a long-term conversation memory store and does not require accounts, secrets, or private user data for the public demo. The browser verification flow uses fixed public demonstration data.
 
+Use the hosted service as a proof-of-concept, teaching artifact, and browser-testable harness. For production use, port or self-host the pattern inside your own trusted stack with persistence, authentication, provenance, and rate limits.
+
 ## Endpoints
 
 - `GET /api/health`
+- `GET /api/scope`
+- `GET /api/project-prompt`
+- `GET /api/source-text`
+- `GET /api/build-payload`
+- `GET /api/verify-chain`
+- `GET /api/adversarial-suite`
 - `GET /api/examples`
+- `GET /api/demo-run`
 - `POST /api/fuse`
 - `GET /skill.md`
 
