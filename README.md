@@ -1,6 +1,11 @@
 # NANDA Memory Fusion Service
 
-This is a small NandaHack Phase 2 web service. It exposes a stateless basis-gated memory fusion API that agents can call when they need to separate actionable evidence from irrelevant context saturation.
+This is a small NandaHack Phase 2 web service. It demonstrates two layers of agent memory:
+
+1. **A PN-Counter core** that preserves signed evidence. Accepted reports accumulate into two grow-only maps (`value = sum(positive) - sum(negative)`) whose merge is pointwise max, so concurrent deltas converge without loss — where a last-writer-wins register would silently drop all but one. `POST /api/fuse` returns the `pn_counter` object so you can see the preserved total.
+2. **A basis gate** on top that decides which reports are even allowed to become deltas: only evidence that restricts onto a declared task basis fuses; irrelevant natural-language, code-shaped, and off-basis context is ignored.
+
+The homepage's **PN-Counter** tab runs a live "preservation vs last-writer-wins" contrast against `/api/fuse`.
 
 It is not a long-term conversation memory store and does not require accounts, secrets, or private user data for the public demo. The browser verification flow uses fixed public demonstration data.
 

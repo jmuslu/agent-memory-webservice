@@ -485,11 +485,12 @@
       <div class="shader-field"></div>
       <header class="topbar">
         <div class="brand">
-          <span>Basis-Gated Fusion</span>
+          <span>Signed Evidence &middot; Basis-Gated Fusion</span>
           <strong>NANDA Memory Fusion</strong>
         </div>
         <nav class="tabs" aria-label="Page sections">
           <button class="tab-button is-active" type="button" data-tab="visual">Visual Model</button>
+          <button class="tab-button" type="button" data-tab="pn">PN-Counter</button>
           <button class="tab-button" type="button" data-tab="agent">Agent/API Details</button>
         </nav>
       </header>
@@ -497,16 +498,23 @@
       <section class="tab-panel visual-panel is-active" id="visual-panel">
         <div class="hero-grid">
           <section class="narrative">
-            <h1>Memory That Only Bonds On Basis</h1>
+            <h1>Memory That Preserves Evidence, Not Just Consensus</h1>
             <p class="lead">
-              A project prompt creates a typed task graph. Raw context can swarm around it,
-              but only reports that restrict onto the declared basis are allowed to become
-              actionable memory.
+              Underneath, a <strong>PN-Counter</strong> keeps every concurrent signed delta
+              instead of letting one writer overwrite the rest &mdash; replicas converge
+              <em>without</em> losing evidence, where a last-writer-wins register would
+              silently drop it. (<a href="#" data-tab-link="pn">See why &rarr;</a>)
             </p>
             <p class="lead">
-              This hosted page is a proof-of-concept visualization. The same rule can run as
-              an external service, inside an LLM wiki workflow, or as a local library in a
-              trusted agent stack.
+              On top, a <strong>basis gate</strong> decides which reports are even allowed to
+              become deltas. A project prompt creates a typed task graph; raw context can
+              swarm around it, but only reports that restrict onto a declared basis dimension
+              fuse into actionable memory.
+            </p>
+            <p class="lead">
+              This hosted page is a proof-of-concept visualization. The same two layers can
+              run as an external service, inside an LLM wiki workflow, or as a local library
+              in a trusted agent stack.
             </p>
             <div class="stage-controls" aria-label="Animation stages">
               <button class="stage-button is-active" type="button" data-stage="task">
@@ -626,6 +634,41 @@
         </div>
       </section>
 
+      <section class="tab-panel agent-panel" id="pn-panel">
+        <h1>Why It Converges Without Losing Evidence</h1>
+        <p class="agent-intro">
+          Basis-gating decides <em>what</em> may fuse. The layer underneath decides
+          <em>how</em> accepted evidence accumulates &mdash; and that is a <strong>PN-Counter</strong>,
+          a conflict-free replicated data type (CRDT). Each key is two grow-only maps, and the
+          value is their difference:
+        </p>
+        <pre>positive: dimension -&gt; non-negative integer
+negative: dimension -&gt; non-negative integer
+value    = sum(positive) - sum(negative)
+merge    = pointwise max on both maps   (commutative, associative, idempotent)</pre>
+        <p class="agent-intro">
+          Because merge is pointwise max, replicas that have seen the same signed reports
+          converge to the same total regardless of delivery order, duplication, or reordering
+          &mdash; and <strong>every concurrent delta survives exactly once</strong>. A
+          last-writer-wins register also converges, but it converges to the wrong object: it
+          keeps one writer's value and silently drops the rest. Convergence is agreement on a
+          value; this is agreement on the preserved evidence. In the reference implementation,
+          each replica additionally defends its own coordinate, so a peer cannot forge (and,
+          under max, permanently latch) a tally the node never wrote.
+        </p>
+
+        <div class="actions">
+          <button id="run-preservation" type="button">Run Preservation vs LWW</button>
+        </div>
+
+        <div class="agent-grid">
+          <section class="api-block">
+            <h3>Preserved Signed Total (POST /api/fuse)</h3>
+            <pre id="preservation-output">Click "Run Preservation vs LWW" to send two concurrent deltas on the same basis (+2, then -1) and compare the preserved PN-Counter total against what a last-writer-wins register would keep.</pre>
+          </section>
+        </div>
+      </section>
+
       <section class="tab-panel agent-panel" id="agent-panel">
         <h1>Agent/API Details</h1>
         <p class="agent-intro">
@@ -679,16 +722,25 @@
       const tabButtons = Array.from(document.querySelectorAll(".tab-button"));
       const tabPanels = {
         visual: document.querySelector("#visual-panel"),
+        pn: document.querySelector("#pn-panel"),
         agent: document.querySelector("#agent-panel")
       };
 
+      function activateTab(target) {
+        tabButtons.forEach((item) => item.classList.toggle("is-active", item.dataset.tab === target));
+        Object.entries(tabPanels).forEach(([key, panel]) => {
+          panel.classList.toggle("is-active", key === target);
+        });
+      }
+
       tabButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          const target = button.dataset.tab;
-          tabButtons.forEach((item) => item.classList.toggle("is-active", item === button));
-          Object.entries(tabPanels).forEach(([key, panel]) => {
-            panel.classList.toggle("is-active", key === target);
-          });
+        button.addEventListener("click", () => activateTab(button.dataset.tab));
+      });
+
+      document.querySelectorAll("[data-tab-link]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          activateTab(link.dataset.tabLink);
         });
       });
 
@@ -714,6 +766,45 @@
 
       stageButtons.forEach((button) => {
         button.addEventListener("click", () => setStage(button.dataset.stage));
+      });
+
+      document.querySelector("#run-preservation").addEventListener("click", async () => {
+        const output = document.querySelector("#preservation-output");
+        const payload = {
+          node: "calculator",
+          basis: ["add"],
+          threshold: 1,
+          reports: [
+            { id: "builder", basis: "add", op: "inc", amount: 2 },
+            { id: "reviewer", basis: "add", op: "dec", amount: 1 }
+          ]
+        };
+        output.textContent = "POST /api/fuse ...";
+        try {
+          const response = await fetch("/api/fuse", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const data = await response.json();
+          // A last-writer-wins register would retain only the final write.
+          const last = payload.reports[payload.reports.length - 1];
+          const lwwValue = last.op === "dec" ? -last.amount : last.amount;
+          output.textContent = JSON.stringify(
+            {
+              concurrent_reports: payload.reports.map((r) => `${r.id}: ${r.op} ${r.amount} on '${r.basis}'`),
+              pn_counter: data.pn_counter,
+              pn_counter_value: data.pn_counter.value,
+              last_writer_wins_would_keep: lwwValue,
+              evidence_preserved: data.pn_counter.value !== lwwValue,
+              trace: data.trace
+            },
+            null,
+            2
+          );
+        } catch (error) {
+          output.textContent = `Request failed: ${error.message}`;
+        }
       });
 
       document.querySelector("#run-demo").addEventListener("click", async () => {

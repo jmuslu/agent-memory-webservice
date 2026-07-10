@@ -6,7 +6,7 @@ NANDA Memory Fusion
 
 ## One-line description
 
-Basis-gated memory fusion for agents: accepts signed evidence that matches a declared task basis and ignores irrelevant natural-language, code-shaped, and off-basis context.
+Signed-evidence agent memory: a PN-Counter core preserves concurrent deltas instead of clobbering them (last-writer-wins loses evidence), and a basis gate on top only fuses reports that restrict onto a declared task basis — ignoring irrelevant natural-language, code-shaped, and off-basis context.
 
 ## Source URL
 
