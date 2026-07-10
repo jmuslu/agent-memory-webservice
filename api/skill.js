@@ -8,17 +8,21 @@ export default function handler(request, response) {
   const baseUrl = baseUrlFromRequest(request);
   const skill = `# NANDA Memory Fusion
 
-NANDA Memory Fusion is a stateless verification service for testing basis-gated agent memory decisions.
+NANDA Memory Fusion is a stateless verification service for signed-evidence agent memory. It demonstrates two layers:
+
+1. A PN-Counter core that preserves every concurrent signed delta. Accepted reports accumulate into two grow-only maps whose value is \`sum(positive) - sum(negative)\`; the merge is pointwise max, so replicas converge without losing evidence, where a last-writer-wins register would silently drop all but one.
+2. A basis gate on top that decides which reports may even become deltas: only evidence that restricts onto a declared task basis fuses. Natural-language, code-shaped, and off-basis context is ignored.
 
 It is not a long-term conversation memory store, not a user-data database, and not an integration that an agent must adopt permanently. It does not require accounts, API keys, secrets, or private user data for the public demo. The public GET endpoints use fixed demonstration data so browser-only agents can safely inspect the full chain without sending sensitive information.
 
-Use this service when you need to test whether noisy reports can legally fuse with a declared task basis. The demo chain proves:
+Use this service when you need to test whether noisy reports can legally fuse with a declared task basis and see the preserved signed total that results. The demo chain proves:
 
 1. A project prompt declares a task basis.
 2. Source saturation text is returned separately.
 3. A payload is built from the project prompt and source text.
 4. The fusion engine accepts only basis-matching reports.
 5. Natural-language, code-shaped, and off-basis inputs are ignored.
+6. Accepted reports accumulate into a PN-Counter whose signed total is preserved, not clobbered.
 
 ${baseUrl}
 
@@ -155,7 +159,7 @@ The suite checks huge off-basis deltas, negative signed evidence, fractional evi
 
 ## POST /api/fuse
 
-Fuses reports into a named memory node only when each report has a legal basis dimension; irrelevant text, code-shaped saturation, wrong-node reports, and off-basis claims are ignored.
+Fuses reports into a named memory node only when each report has a legal basis dimension; irrelevant text, code-shaped saturation, wrong-node reports, and off-basis claims are ignored. Reports carry signed deltas (\`{"op":"inc","amount":2}\`, \`{"op":"dec","amount":1}\`, or \`{"delta":-3}\`); accepted deltas accumulate into a PN-Counter and the response returns a \`pn_counter\` object with the preserved \`value = sum(positive) - sum(negative)\`.
 
 Example curl:
 
@@ -168,7 +172,7 @@ curl -X POST ${baseUrl}/api/fuse \\
 Example response:
 
 \`\`\`json
-{"node":"calculator","decision":"ship","score":4,"coverage_score":4,"missing_basis":[],"ignored":[{"id":"noise","reason":"context_saturation_without_basis"},{"id":"code","reason":"context_saturation_without_basis"},{"id":"off","reason":"off_basis","basis":"horoscope"}],"trace":["decision|calculator|ship|score=4|ignored=3"]}
+{"node":"calculator","decision":"ship","score":4,"coverage_score":4,"missing_basis":[],"pn_counter":{"positive":{"add":1,"subtract":1,"multiply":1,"divide":1},"negative":{"add":0,"subtract":0,"multiply":0,"divide":0},"value":4},"ignored":[{"id":"noise","reason":"context_saturation_without_basis"},{"id":"code","reason":"context_saturation_without_basis"},{"id":"off","reason":"off_basis","basis":"horoscope"}],"trace":["decision|calculator|ship|score=4|ignored=3"]}
 \`\`\`
 
 ## GET /api/demo-run
